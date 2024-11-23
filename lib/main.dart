@@ -13,11 +13,30 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: const Text('flutter_rust_bridge quickstart')),
-        body: Center(
-          child: Text(
-              'Action: Call Rust `greet("Tom")`\nResult: `${greet(name: "Tom")}`'),
+      home: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: const TabBar(
+            tabs: [
+              Tab(icon: Icon(Icons.home)),
+              Tab(icon: Icon(Icons.history)),
+              Tab(icon: Icon(Icons.settings)),
+            ],
+          ),
+          body: TabBarView(
+            children: [
+              Center(
+                child: Text(
+                    'Action: Call Rust `greet("Tom")`\nResult: `${greet(name: "Tom")}`'),
+              ),
+              const Center(
+                child: Text("history"),
+              ),
+              const Center(
+                child: Text("settings"),
+              )
+            ],
+          ),
         ),
       ),
     );
