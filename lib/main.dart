@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:youdao_dict_for_linux/src/rust/api/simple.dart';
+import 'package:provider/provider.dart';
+import 'package:youdao_dict_for_linux/history_tab.dart';
+import 'package:youdao_dict_for_linux/home_tab.dart';
 import 'package:youdao_dict_for_linux/src/rust/frb_generated.dart';
+import 'package:youdao_dict_for_linux/state.dart';
+
+const padding_edge = 16.0;
 
 Future<void> main() async {
   await RustLib.init();
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (context) => Counter()),
+    ChangeNotifierProvider(create: (context) => HomeTabState()),
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -25,16 +33,12 @@ class MyApp extends StatelessWidget {
           ),
           body: TabBarView(
             children: [
-              Center(
-                child: Text(
-                    'Action: Call Rust `greet("Tom")`\nResult: `${greet(name: "Tom")}`'),
-              ),
-              const Center(
-                child: Text("history"),
-              ),
-              const Center(
-                child: Text("settings"),
-              )
+              Padding(padding: const EdgeInsets.all(padding_edge), child: HomeTab()),
+              const Padding(
+                  padding: EdgeInsets.all(padding_edge), child: HistoryTab()),
+              const Padding(
+                  padding: EdgeInsets.all(padding_edge),
+                  child: Center(child: Text("settings"))),
             ],
           ),
         ),
