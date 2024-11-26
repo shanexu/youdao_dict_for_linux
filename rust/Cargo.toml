@@ -8,8 +8,11 @@ crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
 anyhow = "1.0.93"
+chrono = "0.4.38"
 flutter_rust_bridge = "=2.6.0"
 reqwest = { version = "0.12.9", features = ["json"] }
 scraper = "0.21.0"
 serde = { version = "1.0.215", features = ["derive"] }
 serde_json = "1.0.133"
+sqlx = { version = "0.8.2", features = ["chrono", "migrate", "runtime-tokio", "sqlite", "sqlx-sqlite"], default-features = false }
+tokio = { version = "1.41.1", features = ["full"] }
