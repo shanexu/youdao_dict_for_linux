@@ -10,31 +10,40 @@ class HomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeTabState>(
-        builder: (context, state, child) => Column(
-              mainAxisAlignment: state.searchWord == null
-                  ? MainAxisAlignment.center
-                  : MainAxisAlignment.start,
-              children: [
-                TextField(
-                  controller: _inputController,
-                  decoration: InputDecoration(
-                    prefixIcon: IconButton(
-                        onPressed: () {
-                          state.setSearchWord(_inputController.text);
-                        },
-                        icon: const Icon(Icons.search)),
-                    suffixIcon: IconButton(
-                        onPressed: () {
-                          _inputController.clear();
-                        },
-                        icon: const Icon(Icons.clear)),
-                    border: const OutlineInputBorder(),
-                  ),
-                ),
-                Expanded(child: Markdown(selectable: true, data: state.result)),
-              ],
-            ));
+    return Consumer<HomeTabState>(builder: (context, state, child) {
+      var children = <Widget>[
+        TextField(
+          controller: _inputController,
+          onSubmitted: (value) {
+            state.setSearchWord(_inputController.text);
+          },
+          decoration: InputDecoration(
+            prefixIcon: IconButton(
+                onPressed: () {
+                  state.setSearchWord(_inputController.text);
+                },
+                icon: const Icon(Icons.search)),
+            suffixIcon: IconButton(
+                onPressed: () {
+                  _inputController.clear();
+                  state.reset();
+                },
+                icon: const Icon(Icons.clear)),
+            border: const OutlineInputBorder(),
+          ),
+        )
+      ];
+      if (state.searchWord != null) {
+        children.add(
+            Expanded(child: Markdown(selectable: true, data: state.result)));
+      }
+      return Column(
+        mainAxisAlignment: state.searchWord == null
+            ? MainAxisAlignment.center
+            : MainAxisAlignment.start,
+        children: children,
+      );
+    });
   }
 }
 
@@ -45,7 +54,15 @@ class HomeTabState with ChangeNotifier {
   setSearchWord(String w) async {
     searchWord = w;
     var r = await wordResult(word: w);
-    result = '${r.wordHead}:\n\n${r.phoneCon}\n\n${r.simpleDict}\n\n${r.catalogueSentence}\n';
+    result = r.notFound
+        ? '${r.wordHead}\n\n${r.maybe}\n'
+        : '${r.wordHead}:\n\n${r.phoneCon}\n\n${r.simpleDict}\n\n${r.catalogueSentence}\n';
+    notifyListeners();
+  }
+
+  reset() {
+    searchWord = null;
+    result = "";
     notifyListeners();
   }
 }
