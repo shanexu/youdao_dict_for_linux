@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:provider/provider.dart';
+import 'package:youdao_dict_for_linux/src/rust/api/db.dart';
 import 'package:youdao_dict_for_linux/src/rust/api/service.dart';
 
 class HomeTab extends StatelessWidget {
@@ -57,6 +58,9 @@ class HomeTabState with ChangeNotifier {
     result = r.notFound
         ? '${r.wordHead}\n\n${r.maybe}\n'
         : '${r.wordHead}:\n\n${r.phoneCon}\n\n${r.simpleDict}\n\n${r.catalogueSentence}\n';
+    if (!r.notFound) {
+      await createHistory(word: w);
+    }
     notifyListeners();
   }
 

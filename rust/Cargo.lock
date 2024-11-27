@@ -48,6 +48,7 @@ dependencies = [
  "anyhow",
  "atomic",
  "backtrace",
+ "chrono",
 ]
 
 [[package]]
@@ -536,6 +537,7 @@ dependencies = [
  "build-target",
  "bytemuck",
  "byteorder",
+ "chrono",
  "console_error_panic_hook",
  "dart-sys-fork",
  "delegate-attr",
@@ -1799,7 +1801,9 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "chrono",
+ "dotenvy",
  "flutter_rust_bridge",
+ "home",
  "reqwest",
  "scraper",
  "serde",
