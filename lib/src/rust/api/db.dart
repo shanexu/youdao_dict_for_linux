@@ -5,14 +5,28 @@
 
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+import 'service.dart';
 
 Future<void> initDb() => RustLib.instance.api.crateApiDbInitDb();
 
 Future<List<History>> listHistory() =>
     RustLib.instance.api.crateApiDbListHistory();
 
+Future<List<HistorySummary>> historySummary() =>
+    RustLib.instance.api.crateApiDbHistorySummary();
+
 Future<PlatformInt64> createHistory({required String word}) =>
     RustLib.instance.api.crateApiDbCreateHistory(word: word);
+
+Future<void> deleteHistory({required PlatformInt64 id}) =>
+    RustLib.instance.api.crateApiDbDeleteHistory(id: id);
+
+Future<void> upsertWordCache(
+        {required String word, required WordResult result}) =>
+    RustLib.instance.api.crateApiDbUpsertWordCache(word: word, result: result);
+
+Future<WordCache?> getWordCache({required String word}) =>
+    RustLib.instance.api.crateApiDbGetWordCache(word: word);
 
 class History {
   final PlatformInt64 id;
@@ -36,4 +50,49 @@ class History {
           id == other.id &&
           word == other.word &&
           createdAt == other.createdAt;
+}
+
+class HistorySummary {
+  final String word;
+  final PlatformInt64 count;
+
+  const HistorySummary({
+    required this.word,
+    required this.count,
+  });
+
+  @override
+  int get hashCode => word.hashCode ^ count.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HistorySummary &&
+          runtimeType == other.runtimeType &&
+          word == other.word &&
+          count == other.count;
+}
+
+class WordCache {
+  final String word;
+  final WordResult result;
+  final DateTime updatedAt;
+
+  const WordCache({
+    required this.word,
+    required this.result,
+    required this.updatedAt,
+  });
+
+  @override
+  int get hashCode => word.hashCode ^ result.hashCode ^ updatedAt.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is WordCache &&
+          runtimeType == other.runtimeType &&
+          word == other.word &&
+          result == other.result &&
+          updatedAt == other.updatedAt;
 }

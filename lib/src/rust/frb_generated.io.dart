@@ -33,7 +33,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool dco_decode_bool(dynamic raw);
 
   @protected
+  WordCache dco_decode_box_autoadd_word_cache(dynamic raw);
+
+  @protected
+  WordResult dco_decode_box_autoadd_word_result(dynamic raw);
+
+  @protected
   History dco_decode_history(dynamic raw);
+
+  @protected
+  HistorySummary dco_decode_history_summary(dynamic raw);
 
   @protected
   PlatformInt64 dco_decode_i_64(dynamic raw);
@@ -42,13 +51,22 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<History> dco_decode_list_history(dynamic raw);
 
   @protected
+  List<HistorySummary> dco_decode_list_history_summary(dynamic raw);
+
+  @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
+
+  @protected
+  WordCache? dco_decode_opt_box_autoadd_word_cache(dynamic raw);
 
   @protected
   int dco_decode_u_8(dynamic raw);
 
   @protected
   void dco_decode_unit(dynamic raw);
+
+  @protected
+  WordCache dco_decode_word_cache(dynamic raw);
 
   @protected
   WordResult dco_decode_word_result(dynamic raw);
@@ -66,7 +84,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
+  WordCache sse_decode_box_autoadd_word_cache(SseDeserializer deserializer);
+
+  @protected
+  WordResult sse_decode_box_autoadd_word_result(SseDeserializer deserializer);
+
+  @protected
   History sse_decode_history(SseDeserializer deserializer);
+
+  @protected
+  HistorySummary sse_decode_history_summary(SseDeserializer deserializer);
 
   @protected
   PlatformInt64 sse_decode_i_64(SseDeserializer deserializer);
@@ -75,13 +102,24 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<History> sse_decode_list_history(SseDeserializer deserializer);
 
   @protected
+  List<HistorySummary> sse_decode_list_history_summary(
+      SseDeserializer deserializer);
+
+  @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
+
+  @protected
+  WordCache? sse_decode_opt_box_autoadd_word_cache(
+      SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_8(SseDeserializer deserializer);
 
   @protected
   void sse_decode_unit(SseDeserializer deserializer);
+
+  @protected
+  WordCache sse_decode_word_cache(SseDeserializer deserializer);
 
   @protected
   WordResult sse_decode_word_result(SseDeserializer deserializer);
@@ -103,7 +141,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_word_cache(
+      WordCache self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_word_result(
+      WordResult self, SseSerializer serializer);
+
+  @protected
   void sse_encode_history(History self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_history_summary(
+      HistorySummary self, SseSerializer serializer);
 
   @protected
   void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer);
@@ -112,14 +162,25 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_list_history(List<History> self, SseSerializer serializer);
 
   @protected
+  void sse_encode_list_history_summary(
+      List<HistorySummary> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_prim_u_8_strict(
       Uint8List self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_word_cache(
+      WordCache? self, SseSerializer serializer);
 
   @protected
   void sse_encode_u_8(int self, SseSerializer serializer);
 
   @protected
   void sse_encode_unit(void self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_word_cache(WordCache self, SseSerializer serializer);
 
   @protected
   void sse_encode_word_result(WordResult self, SseSerializer serializer);

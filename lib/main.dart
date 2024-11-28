@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:youdao_dict_for_linux/history_tab.dart';
 import 'package:youdao_dict_for_linux/home_tab.dart';
+import 'package:youdao_dict_for_linux/settings_tab.dart';
 import 'package:youdao_dict_for_linux/src/rust/api/db.dart';
 import 'package:youdao_dict_for_linux/src/rust/frb_generated.dart';
 
@@ -25,30 +28,29 @@ class MyApp extends StatelessWidget {
       home: DefaultTabController(
         length: 3,
         child: Scaffold(
-          appBar: TabBar(
-            tabs: const [
-              Tab(icon: Icon(Icons.home)),
-              Tab(icon: Icon(Icons.history)),
-              Tab(icon: Icon(Icons.settings)),
-            ],
-            onTap: (idx) async {
-              if (idx == 1) {
-                await context.read<HistoryTabState>().refresh();
-              }
-            },
-          ),
-          body: TabBarView(
-            children: [
-              Padding(
-                  padding: const EdgeInsets.all(paddingEdge), child: HomeTab()),
-              const Padding(
-                  padding: EdgeInsets.all(paddingEdge), child: HistoryTab()),
-              const Padding(
-                  padding: EdgeInsets.all(paddingEdge),
-                  child: Center(child: Text("settings"))),
-            ],
-          ),
-        ),
+            appBar: TabBar(
+              tabs: const [
+                Tab(icon: Icon(Icons.home)),
+                Tab(icon: Icon(Icons.history)),
+                Tab(icon: Icon(Icons.settings)),
+              ],
+              onTap: (idx) {
+                if (idx == 1) {
+                  context.read<HistoryTabState>().refresh();
+                }
+              },
+            ),
+            body: TabBarView(
+              children: [
+                Padding(
+                    padding: const EdgeInsets.all(paddingEdge),
+                    child: HomeTab()),
+                const Padding(
+                    padding: EdgeInsets.all(paddingEdge), child: HistoryTab()),
+                const Padding(
+                    padding: EdgeInsets.all(paddingEdge), child: SettingsTab()),
+              ],
+            )),
       ),
     );
   }

@@ -54,12 +54,23 @@ class HomeTabState with ChangeNotifier {
 
   setSearchWord(String w) async {
     searchWord = w;
-    var r = await wordResult(word: w);
-    result = r.notFound
-        ? '${r.wordHead}\n\n${r.maybe}\n'
-        : '${r.wordHead}:\n\n${r.phoneCon}\n\n${r.simpleDict}\n\n${r.catalogueSentence}\n';
-    if (!r.notFound) {
-      await createHistory(word: w);
+    if (w.isEmpty) {
+      result = "";
+    } else {
+      var c = await getWordCache(word: w);
+      WordResult r;
+      if (c != null) {
+        r = c.result;
+      } else {
+        r = await wordResult(word: w);
+        await upsertWordCache(word: w, result: r);
+      }
+      result = r.notFound
+          ? '${r.wordHead}\n\n${r.maybe}\n'
+          : '${r.wordHead}:\n\n${r.phoneCon}\n\n${r.simpleDict}\n\n${r.catalogueSentence}\n';
+      if (!r.notFound) {
+        await createHistory(word: w);
+      }
     }
     notifyListeners();
   }
