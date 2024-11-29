@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
               ],
               onTap: (idx) {
                 if (idx == 1) {
-                  context.read<HistoryTabState>().refresh();
+                  context.read<HistoryTabState>().refreshAll();
                 }
               },
             ),

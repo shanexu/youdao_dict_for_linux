@@ -17,6 +17,7 @@ pub struct History {
 pub struct HistorySummary {
     pub word: String,
     pub count: i64,
+    pub result: Option<WordResult>,
 }
 
 #[frb]
@@ -100,7 +101,32 @@ pub async fn history_summary() -> anyhow::Result<Vec<HistorySummary>> {
     .await?;
     let history_summaries = rows
         .into_iter()
-        .map(|(word, count)| HistorySummary { word, count })
+        .map(|(word, count)| HistorySummary {
+            word,
+            count,
+            result: None,
+        })
+        .collect();
+    Ok(history_summaries)
+}
+
+#[frb]
+pub async fn history_summary_with_cached_result() -> anyhow::Result<Vec<HistorySummary>> {
+    let rows: Vec<(String, i64, String)> = sqlx::query_as(
+        r#"SELECT s.word, s.count, c.result FROM
+(SELECT word,count(*) as count FROM history GROUP BY word ORDER BY count DESC) s
+LEFT JOIN word_cache c
+on s.word = c.word;"#,
+    )
+    .fetch_all(&(*POOL))
+    .await?;
+    let history_summaries = rows
+        .into_iter()
+        .map(|(word, count, result)| HistorySummary {
+            word,
+            count,
+            result: serde_json::from_str(&result).ok(),
+        })
         .collect();
     Ok(history_summaries)
 }
@@ -123,6 +149,19 @@ pub async fn delete_history(id: i64) -> anyhow::Result<()> {
         .bind(id)
         .execute(&(*POOL))
         .await?;
+    Ok(())
+}
+
+#[frb]
+pub async fn delete_one_oldest_history(word: &str) -> anyhow::Result<()> {
+    let opt_id: Option<(i64,)> =
+        sqlx::query_as("SELECT id FROM history WHERE word = ? ORDER BY created_at ASC")
+            .bind(word)
+            .fetch_optional(&(*POOL))
+            .await?;
+    if let Some((id,)) = opt_id {
+        return delete_history(id).await;
+    }
     Ok(())
 }
 

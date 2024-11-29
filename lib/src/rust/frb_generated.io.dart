@@ -60,6 +60,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   WordCache? dco_decode_opt_box_autoadd_word_cache(dynamic raw);
 
   @protected
+  WordResult? dco_decode_opt_box_autoadd_word_result(dynamic raw);
+
+  @protected
   int dco_decode_u_8(dynamic raw);
 
   @protected
@@ -110,6 +113,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   WordCache? sse_decode_opt_box_autoadd_word_cache(
+      SseDeserializer deserializer);
+
+  @protected
+  WordResult? sse_decode_opt_box_autoadd_word_result(
       SseDeserializer deserializer);
 
   @protected
@@ -172,6 +179,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_opt_box_autoadd_word_cache(
       WordCache? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_word_result(
+      WordResult? self, SseSerializer serializer);
 
   @protected
   void sse_encode_u_8(int self, SseSerializer serializer);

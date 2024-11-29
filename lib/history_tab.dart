@@ -94,6 +94,7 @@ class HistoryTab extends StatelessWidget {
                                                   items.remove(r);
                                                   state.setItems(items);
                                                   await deleteHistory(id: r.id);
+                                                  state.refreshSummary();
                                                 },
                                                 icon: const Icon(Icons.delete))
                                           ]))
@@ -130,7 +131,10 @@ class HistoryTab extends StatelessWidget {
                                 ],
                                 rows: snapshot.data!
                                     .map((r) => DataRow(cells: [
-                                          DataCell(Text(r.word)),
+                                          DataCell(Tooltip(
+                                              message: r.result?.simpleDict,
+                                              waitDuration: const Duration(seconds: 2),
+                                              child: Text(r.word))),
                                           DataCell(Text(r.count.toString())),
                                           DataCell(Row(
                                             children: [
@@ -145,6 +149,19 @@ class HistoryTab extends StatelessWidget {
                                                   },
                                                   icon:
                                                       const Icon(Icons.search)),
+                                              IconButton(onPressed: () async {
+                                                var state = context.read<HistoryTabState>();
+                                                var summaries = await state.summariesFuture;
+                                                if (r.count == 1) {
+                                                  summaries.remove(r);
+                                                } else {
+                                                  var nr = HistorySummary(word: r.word, count: r.count -1, result: r.result);
+                                                  summaries[summaries.indexOf(r)] = nr;
+                                                }
+                                                state.setSummaries(summaries);
+                                                await deleteOneOldestHistory(word: r.word);
+                                                state.refreshHistory();
+                                              }, icon: const Icon(Icons.exposure_minus_1))
                                             ],
                                           ))
                                         ]))
@@ -168,9 +185,19 @@ class HistoryTabState with ChangeNotifier {
 
   List<bool> get isSelected => [selectedIndex == 0, selectedIndex == 1];
 
-  refresh() {
+  refreshAll() {
     itemsFuture = listHistory();
-    summariesFuture = historySummary();
+    summariesFuture = historySummaryWithCachedResult();
+    notifyListeners();
+  }
+
+  refreshHistory() {
+    itemsFuture = listHistory();
+    notifyListeners();
+  }
+
+  refreshSummary() {
+    summariesFuture = historySummaryWithCachedResult();
     notifyListeners();
   }
 
@@ -181,6 +208,11 @@ class HistoryTabState with ChangeNotifier {
 
   setItemsFuture(Future<List<History>> itemsFuture) {
     this.itemsFuture = itemsFuture;
+    notifyListeners();
+  }
+
+  setSummaries(List<HistorySummary> summaries) {
+    summariesFuture = Future.value(summaries);
     notifyListeners();
   }
 }

@@ -70,7 +70,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.6.0';
 
   @override
-  int get rustContentHash => -1562138387;
+  int get rustContentHash => -1242604917;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -85,6 +85,8 @@ abstract class RustLibApi extends BaseApi {
 
   Future<void> crateApiDbDeleteHistory({required PlatformInt64 id});
 
+  Future<void> crateApiDbDeleteOneOldestHistory({required String word});
+
   Future<WordCache?> crateApiDbGetWordCache({required String word});
 
   String crateApiSimpleGreet({required String name});
@@ -92,6 +94,8 @@ abstract class RustLibApi extends BaseApi {
   String crateApiSimpleHello({required String name});
 
   Future<List<HistorySummary>> crateApiDbHistorySummary();
+
+  Future<List<HistorySummary>> crateApiDbHistorySummaryWithCachedResult();
 
   Future<void> crateApiSimpleInitApp();
 
@@ -162,13 +166,38 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<WordCache?> crateApiDbGetWordCache({required String word}) {
+  Future<void> crateApiDbDeleteOneOldestHistory({required String word}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(word, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 3, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_unit,
+        decodeErrorData: sse_decode_AnyhowException,
+      ),
+      constMeta: kCrateApiDbDeleteOneOldestHistoryConstMeta,
+      argValues: [word],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiDbDeleteOneOldestHistoryConstMeta =>
+      const TaskConstMeta(
+        debugName: "delete_one_oldest_history",
+        argNames: ["word"],
+      );
+
+  @override
+  Future<WordCache?> crateApiDbGetWordCache({required String word}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        sse_encode_String(word, serializer);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 4, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_opt_box_autoadd_word_cache,
@@ -191,7 +220,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(name, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -214,7 +243,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: () {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(name, serializer);
-        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5)!;
+        return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_String,
@@ -237,7 +266,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 6, port: port_);
+            funcId: 7, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_history_summary,
@@ -255,12 +284,36 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<List<HistorySummary>> crateApiDbHistorySummaryWithCachedResult() {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        final serializer = SseSerializer(generalizedFrbRustBinding);
+        pdeCallFfi(generalizedFrbRustBinding, serializer,
+            funcId: 8, port: port_);
+      },
+      codec: SseCodec(
+        decodeSuccessData: sse_decode_list_history_summary,
+        decodeErrorData: sse_decode_AnyhowException,
+      ),
+      constMeta: kCrateApiDbHistorySummaryWithCachedResultConstMeta,
+      argValues: [],
+      apiImpl: this,
+    ));
+  }
+
+  TaskConstMeta get kCrateApiDbHistorySummaryWithCachedResultConstMeta =>
+      const TaskConstMeta(
+        debugName: "history_summary_with_cached_result",
+        argNames: [],
+      );
+
+  @override
   Future<void> crateApiSimpleInitApp() {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 7, port: port_);
+            funcId: 9, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -283,7 +336,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 8, port: port_);
+            funcId: 10, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -306,7 +359,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       callFfi: (port_) {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 9, port: port_);
+            funcId: 11, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_list_history,
@@ -332,7 +385,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(word, serializer);
         sse_encode_box_autoadd_word_result(result, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 10, port: port_);
+            funcId: 12, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_unit,
@@ -356,7 +409,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         final serializer = SseSerializer(generalizedFrbRustBinding);
         sse_encode_String(word, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
-            funcId: 11, port: port_);
+            funcId: 13, port: port_);
       },
       codec: SseCodec(
         decodeSuccessData: sse_decode_word_result,
@@ -426,11 +479,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   HistorySummary dco_decode_history_summary(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
     return HistorySummary(
       word: dco_decode_String(arr[0]),
       count: dco_decode_i_64(arr[1]),
+      result: dco_decode_opt_box_autoadd_word_result(arr[2]),
     );
   }
 
@@ -462,6 +516,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   WordCache? dco_decode_opt_box_autoadd_word_cache(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_word_cache(raw);
+  }
+
+  @protected
+  WordResult? dco_decode_opt_box_autoadd_word_result(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_word_result(raw);
   }
 
   @protected
@@ -559,7 +619,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_word = sse_decode_String(deserializer);
     var var_count = sse_decode_i_64(deserializer);
-    return HistorySummary(word: var_word, count: var_count);
+    var var_result = sse_decode_opt_box_autoadd_word_result(deserializer);
+    return HistorySummary(word: var_word, count: var_count, result: var_result);
   }
 
   @protected
@@ -607,6 +668,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
     if (sse_decode_bool(deserializer)) {
       return (sse_decode_box_autoadd_word_cache(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  WordResult? sse_decode_opt_box_autoadd_word_result(
+      SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_word_result(deserializer));
     } else {
       return null;
     }
@@ -713,6 +786,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.word, serializer);
     sse_encode_i_64(self.count, serializer);
+    sse_encode_opt_box_autoadd_word_result(self.result, serializer);
   }
 
   @protected
@@ -756,6 +830,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_bool(self != null, serializer);
     if (self != null) {
       sse_encode_box_autoadd_word_cache(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_word_result(
+      WordResult? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_word_result(self, serializer);
     }
   }
 

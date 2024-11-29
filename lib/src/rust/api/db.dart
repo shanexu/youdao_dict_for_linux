@@ -15,11 +15,17 @@ Future<List<History>> listHistory() =>
 Future<List<HistorySummary>> historySummary() =>
     RustLib.instance.api.crateApiDbHistorySummary();
 
+Future<List<HistorySummary>> historySummaryWithCachedResult() =>
+    RustLib.instance.api.crateApiDbHistorySummaryWithCachedResult();
+
 Future<PlatformInt64> createHistory({required String word}) =>
     RustLib.instance.api.crateApiDbCreateHistory(word: word);
 
 Future<void> deleteHistory({required PlatformInt64 id}) =>
     RustLib.instance.api.crateApiDbDeleteHistory(id: id);
+
+Future<void> deleteOneOldestHistory({required String word}) =>
+    RustLib.instance.api.crateApiDbDeleteOneOldestHistory(word: word);
 
 Future<void> upsertWordCache(
         {required String word, required WordResult result}) =>
@@ -55,14 +61,16 @@ class History {
 class HistorySummary {
   final String word;
   final PlatformInt64 count;
+  final WordResult? result;
 
   const HistorySummary({
     required this.word,
     required this.count,
+    this.result,
   });
 
   @override
-  int get hashCode => word.hashCode ^ count.hashCode;
+  int get hashCode => word.hashCode ^ count.hashCode ^ result.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -70,7 +78,8 @@ class HistorySummary {
       other is HistorySummary &&
           runtimeType == other.runtimeType &&
           word == other.word &&
-          count == other.count;
+          count == other.count &&
+          result == other.result;
 }
 
 class WordCache {
