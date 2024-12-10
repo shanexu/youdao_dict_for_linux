@@ -26,12 +26,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: DefaultTabController(
-        length: 3,
+        length: 4,
         child: Scaffold(
             appBar: TabBar(
               tabs: const [
                 Tab(icon: Icon(Icons.home)),
                 Tab(icon: Icon(Icons.history)),
+                Tab(icon: Icon(Icons.flash_on)),
                 Tab(icon: Icon(Icons.settings)),
               ],
               onTap: (idx) {
@@ -47,6 +48,8 @@ class MyApp extends StatelessWidget {
                     child: HomeTab()),
                 const Padding(
                     padding: EdgeInsets.all(paddingEdge), child: HistoryTab()),
+                const Padding(
+                    padding: EdgeInsets.all(paddingEdge), child: Text("flash card")),
                 const Padding(
                     padding: EdgeInsets.all(paddingEdge), child: SettingsTab()),
               ],
