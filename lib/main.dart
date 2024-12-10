@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:youdao_dict_for_linux/flashcard_tab.dart';
 import 'package:youdao_dict_for_linux/history_tab.dart';
 import 'package:youdao_dict_for_linux/home_tab.dart';
 import 'package:youdao_dict_for_linux/settings_tab.dart';
@@ -16,6 +17,7 @@ Future<void> main() async {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => HistoryTabState()),
     ChangeNotifierProvider(create: (context) => HomeTabState()),
+    ChangeNotifierProvider(create: (context) => SettingsTabState()),
   ], child: const MyApp()));
 }
 
@@ -24,37 +26,48 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: DefaultTabController(
-        length: 4,
-        child: Scaffold(
-            appBar: TabBar(
-              tabs: const [
-                Tab(icon: Icon(Icons.home)),
-                Tab(icon: Icon(Icons.history)),
-                Tab(icon: Icon(Icons.flash_on)),
-                Tab(icon: Icon(Icons.settings)),
-              ],
-              onTap: (idx) {
-                if (idx == 1) {
-                  context.read<HistoryTabState>().refreshAll();
-                }
-              },
-            ),
-            body: TabBarView(
-              children: [
-                Padding(
-                    padding: const EdgeInsets.all(paddingEdge),
-                    child: HomeTab()),
-                const Padding(
-                    padding: EdgeInsets.all(paddingEdge), child: HistoryTab()),
-                const Padding(
-                    padding: EdgeInsets.all(paddingEdge), child: Text("flash card")),
-                const Padding(
-                    padding: EdgeInsets.all(paddingEdge), child: SettingsTab()),
-              ],
-            )),
-      ),
-    );
+    return Consumer<SettingsTabState>(
+        builder: (context, state, child) => MaterialApp(
+              theme: ThemeData(
+                brightness: Brightness.light,
+              ),
+              darkTheme: ThemeData(
+                brightness: Brightness.dark,
+              ),
+              themeMode: state.themeMode,
+              home: DefaultTabController(
+                length: 4,
+                child: Scaffold(
+                    appBar: TabBar(
+                      tabs: const [
+                        Tab(icon: Icon(Icons.home)),
+                        Tab(icon: Icon(Icons.history)),
+                        Tab(icon: Icon(Icons.flash_on)),
+                        Tab(icon: Icon(Icons.settings)),
+                      ],
+                      onTap: (idx) {
+                        if (idx == 1) {
+                          context.read<HistoryTabState>().refreshAll();
+                        }
+                      },
+                    ),
+                    body: TabBarView(
+                      children: [
+                        Padding(
+                            padding: const EdgeInsets.all(paddingEdge),
+                            child: HomeTab()),
+                        const Padding(
+                            padding: EdgeInsets.all(paddingEdge),
+                            child: HistoryTab()),
+                        const Padding(
+                            padding: EdgeInsets.all(paddingEdge),
+                            child: FlashcardTab()),
+                        const Padding(
+                            padding: EdgeInsets.all(paddingEdge),
+                            child: SettingsTab()),
+                      ],
+                    )),
+              ),
+            ));
   }
 }
